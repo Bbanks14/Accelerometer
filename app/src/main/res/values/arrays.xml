@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- Sampling Rate Arrays -->
+    <string-array name="sampling_rate_entries">
+        <item>Fastest (≈200Hz)</item>
+        <item>Game (≈50Hz)</item>
+        <item>UI (≈16Hz)</item>
+        <item>Normal (≈5Hz)</item>
+    </string-array>
+    
+    <string-array name="sampling_rate_values">
+        <item>FASTEST</item>
+        <item>GAME</item>
+        <item>UI</item>
+        <item>NORMAL</item>
+    </string-array>
+    
+    <!-- Export Format Arrays -->
+    <string-array name="format_entries">
+        <item>CSV (Comma Separated)</item>
+        <item>JSON (JavaScript Object)</item>
+        <item>XML (Extensible Markup)</item>
+        <item>TXT (Plain Text)</item>
+    </string-array>
+    
+    <string-array name="format_values">
+        <item>csv</item>
+        <item>json</item>
+        <item>xml</item>
+        <item>txt</item>
+    </string-array>
+    
+    <!-- Theme Arrays -->
+    <string-array name="theme_entries">
+        <item>Dark Theme</item>
+        <item>Light Theme</item>
+        <item>System Default</item>
+    </string-array>
+    
+    <string-array name="theme_values">
+        <item>dark</item>
+        <item>light</item>
+        <item>system</item>
+    </string-array>
+    
+    <!-- Cleanup Duration Arrays -->
+    <string-array name="cleanup_entries">
+        <item>1 Week</item>
+        <item>1 Month</item>
+        <item>3 Months</item>
+        <item>6 Months</item>
+        <item>1 Year</item>
+    </string-array>
+    
+    <string-array name="cleanup_values">
+        <item>7</item>
+        <item>30</item>
+        <item>90</item>
+        <item>180</item>
+        <item>365</item>
+    </string-array>
+    
+</resources>

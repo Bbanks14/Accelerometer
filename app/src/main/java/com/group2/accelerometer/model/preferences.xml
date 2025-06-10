@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory app:title="Sensor Settings">
+        <ListPreference
+            app:key="sampling_rate"
+            app:title="Sampling Rate"
+            app:entries="@array/sampling_rate_entries"
+            app:entryValues="@array/sampling_rate_values"
+            app:defaultValue="UI"
+            app:summary="Adjust sensor update frequency"/>
+            
+        <SwitchPreferenceCompat
+            app:key="auto_calibration"
+            app:title="Auto Calibration"
+            app:defaultValue="true"
+            app:summary="Automatically calibrate sensor on start"/>
+    </PreferenceCategory>
+    
+    <PreferenceCategory app:title="Appearance">
+        <ListPreference
+            app:key="theme_preference"
+            app:title="App Theme"
+            app:entries="@array/theme_entries"
+            app:entryValues="@array/theme_values"
+            app:defaultValue="dark"
+            app:summary="Choose application theme"/>
+    </PreferenceCategory>
+    
+    <PreferenceCategory app:title="Data Management">
+        <Preference
+            app:title="Clear History"
+            app:summary="Delete all recorded sessions">
+            <intent
+                android:action="com.group2.accelerometer.ACTION_CLEAR_HISTORY"/>
+        </Preference>
+    </PreferenceCategory>
+</PreferenceScreen>

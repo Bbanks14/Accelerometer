@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VibroLab</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="nav_header_title">VibroLab Pro</string>
+    <string name="nav_header_subtitle">Vibration Analysis Tool</string>
+</resources>
