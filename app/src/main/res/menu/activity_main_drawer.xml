@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home"
+            android:title="Home" />
+        
+        <item
+            android:id="@+id/nav_live_graph"
+            android:icon="@drawable/ic_timeline"
+            android:title="Live Graph" /> 
+        <item
+            android:id="@+id/nav_coordinate toogle"
+            android:icon="@drawable/ic_coordinate_system"
+            android:title="@string/coordinate_cartesian" />
+
+        <item
+            android:id="@+id/nav_history"
+            android:icon="@drawable/ic_history"
+            android:title="Recording History" />
+    </group>
+
+    <item android:title="Settings">
+        <menu>
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_settings"
+                android:title="Settings" />
+            
+            <item
+                android:id="@+id/nav_calibrate"
+                android:icon="@drawable/ic_tune"
+                android:title="Calibrate Sensor" />
+        </menu>
+    </item>
+
+    <item android:title="Premium">
+        <menu>
+            <item
+                android:id="@+id/nav_premium"
+                android:icon="@drawable/ic_star"
+                android:title="Upgrade to Premium" />
+            
+            <item
+                android:id="@+id/nav_export"
+                android:icon="@drawable/ic_share"
+                android:title="Export All Data" />
+        </menu>
+    </item>
+
+    <item android:title="About">
+        <menu>
+            <item
+                android:id="@+id/nav_help"
+                android:icon="@drawable/ic_help"
+                android:title="Help & Support" />
+            
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_info"
+                android:title="About VibroLab" />
+        </menu>
+    </item>
+
+</menu>
