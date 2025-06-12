@@ -12,8 +12,12 @@
         <item
             android:id="@+id/nav_live_graph"
             android:icon="@drawable/ic_timeline"
-            android:title="Live Graph" />
-        
+            android:title="Live Graph" /> 
+        <item
+            android:id="@+id/nav_coordinate toogle"
+            android:icon="@drawable/ic_coordinate_system"
+            android:title="@string/coordinate_cartesian" />
+
         <item
             android:id="@+id/nav_history"
             android:icon="@drawable/ic_history"

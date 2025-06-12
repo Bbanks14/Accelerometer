@@ -3,5 +3,7 @@
     <string name="app_name">VibroLab</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="nav_header_title">VibroLab Pro</string>
-    <string name="nav_header_subtitle">Vibration Analysis Tool</string>
+  <string name="nav_header_subtitle">Vibration Analysis Tool</string>
+  <string name="coordinate_cartesian">Cartesian Coordinates (X, Y, Z)</string>
+  <string name="coordinate_polar">Polar Coordinates (ρ,θ,Z)</string>
 </resources>

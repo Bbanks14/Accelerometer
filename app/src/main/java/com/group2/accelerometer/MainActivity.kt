@@ -1,4 +1,4 @@
-package com.example.vibrolab
+package com.group2.accelerometer
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -10,9 +10,12 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -26,7 +29,7 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.google.android.material.navigation.NavigationView
-import kotlin.math.abs
+import java.io.File
 import kotlin.math.sqrt
 
 class MainActivity : AppCompatActivity(), SensorEventListener, NavigationView.OnNavigationItemSelectedListener {
@@ -43,15 +46,22 @@ class MainActivity : AppCompatActivity(), SensorEventListener, NavigationView.On
     private lateinit var chartY: LineChart
     private lateinit var chartZ: LineChart
     private lateinit var appSettings: SharedPreferences
+    private lateinit var dataSetX: LineDataSet
+    private lateinit var dataSetY: LineDataSet
+    private lateinit var dataSetZ: LineDataSet
+    private lateinit var coordinateToggleMenuItem: MenuItem
 
     private var maxAcceleration = 0f
-    private var timeCounter = 0f
     private var isSensorActive = false
-    private var isRecording = false
     private var calibrationX = 0f
     private var calibrationY = 0f
     private var calibrationZ = 0f
+    private var lastX = 0f
+    private var lastY = 0f
+    private var lastZ = 0f
     private val recordedData = mutableListOf<AccelerometerReading>()
+
+    private var isCartesianMode = true
 
     data class AccelerometerReading(
         val timestamp: Long,
@@ -63,42 +73,129 @@ class MainActivity : AppCompatActivity(), SensorEventListener, NavigationView.On
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        // Initialize sensor
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) ?: run {
-            Toast.makeText(this, "Accelerometer not available on this device", Toast.LENGTH_LONG).show()
-            // Disable sensor-related UI elements or functionality
-            return
-        }
+        // Initially set the splash screen layout
+        setContentView(R.layout.splash_screen)
 
-        // Initialize UI components
-        setupNavigationDrawer()
-        initializeViews()
-        setupCharts()
-        setupButtonListeners()
+        // Animate the splash logo
+        val splashLogo = findViewById<ImageView>(R.id.splash_logo)
+        splashLogo.alpha = 0f
+        splashLogo.animate().alpha(1f).duration = 1000L
 
-        // Initialize SharedPreferences
-        appSettings = getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
+        // Use Handler to delay and switch to the main UI
+        Handler(Looper.getMainLooper()).postDelayed({
+            // Switch to the main layout
+            setContentView(R.layout.activity_main)
 
-        // Register broadcast receiver for calibration
-        registerReceiver(calibrationReceiver, IntentFilter("com.group2.accelerometer.CALIBRATE_SENSOR"))
+            // Initialize sensor
+            sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) ?: run {
+                Toast.makeText(this, "Accelerometer not available on this device", Toast.LENGTH_LONG).show()
+                return@postDelayed // Exit if accelerometer is not available
+            }
+
+            // Initialize UI components
+            setupNavigationDrawer()
+            initializeViews()
+            setupCharts()
+            setupButtonListeners()
+
+            // Initialize SharedPreferences
+            appSettings = getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
+
+            // Register broadcast receiver for calibration
+            registerReceiver(calibrationReceiver, IntentFilter("com.group2.accelerometer.CALIBRATE_SENSOR"))
+        }, 2000) // 2000ms = 2 seconds delay
+
+        loadCoordinatePreference()
+
+        updateGraphLabels()
     }
 
-    private fun addDataEntry(dataSet: LineDataSet, chart: LineChart, time: Float, value: Float) {
-        dataSet.addEntry(Entry(time, value))
-        if (dataSet.entryCount > 100) {
-            dataSet.removeFirst()
+    override fun onResume() {
+        super.onResume()
+        if (::accelerometer.isInitialized && !isSensorActive) {
+            startSensor()
         }
-        chart.notifyDataSetChanged()
-        chart.invalidate()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopSensor()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(calibrationReceiver)
+    }
+
+    override fun onSensorChanged(event: SensorEvent) {
+        if (event.sensor.type != Sensor.TYPE_ACCELEROMETER) return
+
+        val x = event.values[0]
+        val y = event.values[1]
+        val z = event.values[2]
+
+        // Calibrate sensor values
+        val calibratedX = x - calibrationX
+        val calibratedY = y - calibrationY
+        val calibratedZ = z - calibrationZ
+
+        // Update UI
+        updateTextViews(calibratedX, calibratedY, calibratedZ)
+
+        // Calculate magnitude
+        val magnitude = sqrt(calibratedX * calibratedX + calibratedY * calibratedY + calibratedZ * calibratedZ)
+
+        // Update maximum acceleration
+        updateMaxAcceleration(magnitude)
+
+        // Add data to charts
+        val time = event.timestamp / 1_000_000_000f // Convert nanoseconds to seconds
+        addDataEntry(dataSetX, chartX, time, calibratedX)
+        addDataEntry(dataSetY, chartY, time, calibratedY)
+        addDataEntry(dataSetZ, chartZ, time, calibratedZ)
+
+        // Store current values for calibration
+        lastX = x
+        lastY = y
+        lastZ = z
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        // Handle accuracy changes if needed
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.nav_home -> { /* Already on main activity */ }
+            R.id.nav_live_graph -> { startActivity(Intent(this, LiveGraphActivity::class.java)) }
+            R.id.nav_history -> { startActivity(Intent(this, HistoryActivity::class.java)) }
+            R.id.nav_calibrate -> calibrateSensor()
+            R.id.nav_share -> { /* Share functionality */ }
+            R.id.nav_settings -> { startActivity(Intent(this, SettingsActivity::class.java)) }
+            R.id.nav_premium -> { showPremiumDialog() }
+            R.id.nav_export -> exportDataToCsv()
+            R.id.nav_help -> { startActivity(Intent(this, HelpActivity::class.java)) }
+            R.id.nav_about -> { showAboutDialog() }
+            R.id.nav_coordinate_toggle -> {
+                toggleCoordinateSystem()
+                updateGraphLabels()
+                return true
+            }
+        }
+
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return true
     }
 
     private fun setupNavigationDrawer() {
         drawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
         navView.setNavigationItemSelectedListener(this)
+
+        coordinateToggleMenuItem = navView.menu.findItem(R.id.nav_coordinate_toggle)
+        updateCoordinateToggleTitle()
 
         val toggle = ActionBarDrawerToggle(
             this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close
@@ -122,13 +219,21 @@ class MainActivity : AppCompatActivity(), SensorEventListener, NavigationView.On
     }
 
     private fun setupCharts() {
+        dataSetX = LineDataSet(mutableListOf(), "X Axis").apply { color = getColor(R.color.red) }
+        dataSetY = LineDataSet(mutableListOf(), "Y Axis").apply { color = getColor(R.color.green) }
+        dataSetZ = LineDataSet(mutableListOf(), "Z Axis").apply { color = getColor(R.color.blue) }
+
+        chartX.data = LineData(dataSetX)
+        chartY.data = LineData(dataSetY)
+        chartZ.data = LineData(dataSetZ)
+
         configureChart(chartX)
         configureChart(chartY)
         configureChart(chartZ)
     }
 
     private fun configureChart(chart: LineChart) {
-        with(chart) {
+        chart.apply {
             description.isEnabled = false
             setTouchEnabled(false)
             setDrawGridBackground(false)
@@ -156,17 +261,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener, NavigationView.On
         findViewById<ImageButton>(R.id.btn_record).setOnClickListener { /* Recording functionality */ }
         findViewById<ImageButton>(R.id.btn_share).setOnClickListener { /* Sharing functionality */ }
 
-        // Axis selection buttons
         listOf(R.id.btn_x_axis, R.id.btn_y_axis, R.id.btn_z_axis).forEach { id ->
             findViewById<View>(id).setOnClickListener { highlightSelectedAxis(it.id) }
         }
     }
 
     private fun startSensor() {
-        if (!isSensorActive) {
+        if (!isSensorActive && ::accelerometer.isInitialized) {
             isSensorActive = true
-            maxAcceleration = 0f
-            timeCounter = 0f
             sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI)
         }
     }
@@ -179,112 +281,79 @@ class MainActivity : AppCompatActivity(), SensorEventListener, NavigationView.On
     }
 
     private fun highlightSelectedAxis(selectedAxisId: Int) {
-        // Reset all backgrounds
         listOf(R.id.btn_x_axis, R.id.btn_y_axis, R.id.btn_z_axis).forEach { id ->
             findViewById<View>(id).setBackgroundResource(R.drawable.axis_button_background)
         }
-
-        // Highlight selected axis
         findViewById<View>(selectedAxisId).setBackgroundResource(R.drawable.axis_button_selected)
     }
 
-    override fun onSensorChanged(event: SensorEvent) {
-        if (event.sensor.type != Sensor.TYPE_ACCELEROMETER) return
+    private fun addDataEntry(dataSet: LineDataSet, chart: LineChart, time: Float, value: Float) {
+        dataSet.addEntry(Entry(time, value))
+        if (dataSet.entryCount > 100) {
+            dataSet.removeFirst()
+        }
+        Handler(Looper.getMainLooper()).post {
+            chart.data.notifyDataChanged()
+            chart.notifyDataSetChanged()
+            chart.invalidate()
+        }
+    }
 
-        val x = event.values[0]
-        val y = event.values[1]
-        val z = event.values[2]
-
-        // Update current values
+    private fun updateTextViews(x: Float, y: Float, z: Float) {
         tvXValue.text = String.format("%.1f", x)
         tvYValue.text = String.format("%.1f", y)
         tvZValue.text = String.format("%.1f", z)
+    }
 
-        // Calculate magnitude
-        val magnitude = sqrt(x * x + y * y + z * z)
+    private fun updateMaxAcceleration(magnitude: Float) {
         if (magnitude > maxAcceleration) {
             maxAcceleration = magnitude
             tvMaximumValue.text = String.format("%.3f", maxAcceleration)
         }
-
-        // Add new data points
-        val time = event.timestamp / 1_000_000_000f // Convert to seconds
-        addDataEntry(dataSetX, chartX, time, x)
-        addDataEntry(dataSetY, chartY, time, y)
-        addDataEntry(dataSetZ, chartZ, time, z)
-    }
-
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks
-        when (item.itemId) {
-            R.id.nav_home -> { /* Already on main activity */ }
-            R.id.nav_live_graph -> { startActivity(Intent(this, LiveGraphActivity::class.java)) }
-            R.id.nav_history -> { startActivity(Intent(this, HistoryActivity::class.java)) }
-            R.id.nav_calibrate -> calibrateSensor()
-            R.id.nav_share -> { /* Share functionality */ }
-            R.id.nav_settings -> { startActivity(Intent(this, SettingsActivity::class.java)) }
-            R.id.nav_premium -> { showPremiumDialog() }
-            R.id.nav_export -> exportDataToCsv()
-            R.id.nav_help -> { startActivity(Intent(this, HelpActivity::class.java)) }
-            R.id.nav_about -> { showAboutDialog() }
-        }
-
-        drawerLayout.closeDrawer(GravityCompat.START)
-        return true
-    }
-
-    override fun onPause() {
-        super.onPause()
-        stopSensor()
     }
 
     private fun calibrateSensor() {
-        // Calibration logic here
-        val calibratedX = x - calibrationX
-        val calibratedY = y - calibrationY
-        val calibratedZ = z - calibrationZ
-        val magnitude = sqrt(calibratedX * calibratedX + calibratedY * calibratedY + calibratedZ * calibratedZ)
-        addDataEntry(dataSetX, chartX, time, calibratedX)
-        addDataEntry(dataSetY, chartY, time, calibratedY)
-        addDataEntry(dataSetZ, chartZ, time, calibratedZ)
-        // Store current values as baseline
         calibrationX = lastX
         calibrationY = lastY
         calibrationZ = lastZ
+        Toast.makeText(this, "Sensor calibrated!", Toast.LENGTH_SHORT).show()
     }
 
     private fun exportDataToCsv() {
+        if (recordedData.isEmpty()) {
+            Toast.makeText(this, "No data to export", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val csvData = recordedData.joinToString("\n") { reading ->
             "${reading.timestamp},${reading.x},${reading.y},${reading.z},${reading.magnitude}"
         }
-        // Save to file or share
-        val file = File(getExternalFilesDir(null), "accelerometer_data_${System.currentTimeMillis()}.csv")
-        file.writeText(csvData)
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/csv"
-            putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(this@MainActivity, "${packageName}.fileprovider", file))
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+        try {
+            val file = File(getExternalFilesDir(null), "accelerometer_data_${System.currentTimeMillis()}.csv")
+            file.writeText(csvData)
+
+            val uri = FileProvider.getUriForFile(this, "${packageName}.fileprovider", file)
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/csv"
+                putExtra(Intent.EXTRA_STREAM, uri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+
+            startActivity(Intent.createChooser(intent, "Share CSV"))
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error exporting data: ${e.message}", Toast.LENGTH_SHORT).show()
         }
-        startActivity(Intent.createChooser(intent, "Share CSV"))
-    }
-
-    private fun updateCharts() {
-        // Update all charts together, less frequently
-        chartX.data?.notifyDataChanged()
-        chartY.data?.notifyDataChanged()
-        chartZ.data?.notifyDataChanged()
-
-        // Invalidate all at once
-        chartX.invalidate()
-        chartY.invalidate()
-        chartZ.invalidate()
     }
 
     private fun showPremiumDialog() {
         val dialog = PremiumDialogFragment()
         dialog.show(supportFragmentManager, PremiumDialogFragment.TAG)
+    }
+
+    private fun showAboutDialog() {
+        // Implement your about dialog here
+        Toast.makeText(this, "About VibroLab", Toast.LENGTH_SHORT).show()
     }
 
     private val calibrationReceiver = object : BroadcastReceiver() {
@@ -295,9 +364,104 @@ class MainActivity : AppCompatActivity(), SensorEventListener, NavigationView.On
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        unregisterReceiver(calibrationReceiver)
+    private fun toggleCoordinateSystem() {
+        isCartesianMode = !isCartesianMode
+        
+        // Save preference
+        saveCoordinatePreference()
+        
+        // Update menu item title
+        updateCoordinateToggleTitle()
+        
+        // Update main activity graphs
+        updateGraphLabels()
+        
+        // Broadcast change to LiveGraphActivity if it's running
+        broadcastCoordinateSystemChange()
+        
+        // Show feedback to user
+        val message = if (isCartesianMode) "Switched to Cartesian coordinates" else "Switched to Polar coordinates"
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+    
+    private fun updateCoordinateToggleTitle() {
+        val title = if (isCartesianMode) {
+            getString(R.string.coordinate_polar) // Show what it will switch TO
+        } else {
+            getString(R.string.coordinate_cartesian)
+        }
+        coordinateToggleMenuItem.title = title
+    }
+    
+    private fun updateGraphLabels() {
+        // Update your main activity graph labels based on coordinate system
+        if (isCartesianMode) {
+            // Set labels to X, Y, Z
+            updateCartesianLabels()
+        } else {
+            // Set labels to ρ (rho), θ (theta), Z
+            updatePolarLabels()
+        }
+    }
+    
+    private fun updateCartesianLabels() {
+        // Update your graph components with Cartesian labels
+        // Example:
+        // xAxisLabel.text = "X-Axis"
+        // yAxisLabel.text = "Y-Axis" 
+        // zAxisLabel.text = "Z-Axis"
+    }
+    
+    private fun updatePolarLabels() {
+        // Update your graph components with Polar labels
+        // Example:
+        // xAxisLabel.text = "ρ (Rho)"
+        // yAxisLabel.text = "θ (Theta)"
+        // zAxisLabel.text = "Z-Axis"
+    }
+    
+    private fun startLiveGraphActivity() {
+        val intent = Intent(this, LiveGraphActivity::class.java)
+        intent.putExtra("coordinate_system", if (isCartesianMode) "cartesian" else "polar")
+        startActivity(intent)
+    }
+    
+    private fun broadcastCoordinateSystemChange() {
+        val intent = Intent("COORDINATE_SYSTEM_CHANGED")
+        intent.putExtra("is_cartesian", isCartesianMode)
+        sendBroadcast(intent)
+    }
+    
+    private fun saveCoordinatePreference() {
+        val prefs = getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        prefs.edit().putBoolean("is_cartesian_mode", isCartesianMode).apply()
+    }
+    
+    private fun loadCoordinatePreference() {
+        val prefs = getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        isCartesianMode = prefs.getBoolean("is_cartesian_mode", true) // Default to Cartesian
+    }
+    
+    // Coordinate conversion functions
+    fun convertToDisplay(x: Float, y: Float, z: Float): Triple<Float, Float, Float> {
+        return if (isCartesianMode) {
+            Triple(x, y, z)
+        } else {
+            cartesianToPolar(x, y, z)
+        }
+    }
+    
+    private fun cartesianToPolar(x: Float, y: Float, z: Float): Triple<Float, Float, Float> {
+        val rho = sqrt(x * x + y * y) // ρ = √(x² + y²)
+        val theta = atan2(y, x) * 180 / PI.toFloat() // θ in degrees
+        return Triple(rho, theta, z) // Z remains the same
+    }
+    
+    // Getter for other activities/fragments
+    fun isCartesianMode(): Boolean = isCartesianMode
+    
+    companion object {
+        const val COORDINATE_SYSTEM_CARTESIAN = "cartesian"
+        const val COORDINATE_SYSTEM_POLAR = "polar"
     }
 }
-
