@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:gravity="center_vertical"
     android:padding="8dp">
 
     <ImageView
-        android:layout_width="16dp"
-        android:layout_height="16dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_check_circle"
         android:layout_marginEnd="12dp"
-        android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_check"
-        android:tint="@color/premium_accent" />
+        android:contentDescription="Feature available"
+        app:tint="#4CAF50" />
 
     <TextView
         android:id="@+id/tv_feature"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textSize="14sp"
-        android:textColor="@color/text_primary" />
+        android:text="Feature description"
+        android:textSize="15sp"
+        android:textColor="#333333"
+        android:lineSpacingExtra="2dp" />
 
 </LinearLayout>

@@ -35,8 +35,8 @@
                     android:layout_centerVertical="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_menu"
-                    android:tint="#FFFFFF"
-                    android:contentDescription="Menu" />
+                    android:contentDescription="Menu"
+                    app:tint="#FFFFFF" />
 
                 <TextView
                     android:id="@+id/tv_title"
@@ -239,8 +239,8 @@
                     android:layout_marginEnd="15dp"
                     android:background="@drawable/control_button_background"
                     android:src="@drawable/ic_play"
-                    android:tint="#4CAF50"
-                    android:contentDescription="Start" />
+                    android:contentDescription="Start"
+                    app:tint="#4CAF50" />
 
                 <ImageButton
                     android:id="@+id/btn_stop"
@@ -249,8 +249,8 @@
                     android:layout_marginEnd="15dp"
                     android:background="@drawable/control_button_background"
                     android:src="@drawable/ic_stop"
-                    android:tint="#F44336"
-                    android:contentDescription="Stop" />
+                    android:contentDescription="Stop"
+                    app:tint="#F44336" />
 
                 <ImageButton
                     android:id="@+id/btn_record"
@@ -258,18 +258,10 @@
                     android:layout_height="50dp"
                     android:layout_marginEnd="15dp"
                     android:background="@drawable/control_button_background"
+                    android:contentDescription="Record"
                     android:src="@drawable/ic_record"
-                    android:tint="#FF5722"
-                    android:contentDescription="Record" />
+                    app:tint="#FF5722" />
 
-                <ImageButton
-                    android:id="@+id/btn_share"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/control_button_background"
-                    android:src="@drawable/ic_share"
-                    android:tint="#2196F3"
-                    android:contentDescription="Share" />
 
             </LinearLayout>
 
@@ -378,7 +370,7 @@
         android:layout_gravity="start"
         android:background="#2a2a2a"
         app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/nav_drawer_menu"
+        app:menu="@menu/activity_main_drawer"
         app:itemTextColor="#FFFFFF"
         app:itemIconTint="#FFFFFF" />
 

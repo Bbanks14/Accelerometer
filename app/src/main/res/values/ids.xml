@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="nav_share" type="id">nav_share</item>
+    <item name="btn_share" type="id">ic_share</item>
+</resources>

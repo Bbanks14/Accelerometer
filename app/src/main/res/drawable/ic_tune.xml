@@ -1,0 +1,33 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Outer circle representing the sensor frame -->
+    <path
+        android:fillColor="#7C4DFF"
+        android:pathData="M12,2
+                          A10,10 0 1,1 11.999,2
+                          Z"/>
+    <!-- Dial markings -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:pathData="M12,4 L12,6
+                          M7.05,7.05 L8.5,8.5
+                          M4,12 L6,12
+                          M7.05,16.95 L8.5,15.5
+                          M12,18 L12,20
+                          M16.95,16.95 L15.5,15.5
+                          M18,12 L20,12
+                          M16.95,7.05 L15.5,8.5"/>
+    <!-- Needle pointing slightly right (representing calibration) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,12 L15,9 L16,10 L13,13 Z"/>
+    <!-- Needle pivot circle -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M14,12a2,2 0 1,1 -4,0a2,2 0 1,1 4,0"/>
+</vector>
+

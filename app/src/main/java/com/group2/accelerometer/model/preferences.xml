@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="">
     <PreferenceCategory app:title="Sensor Settings">
         <ListPreference
             app:key="sampling_rate"
@@ -8,14 +7,14 @@
             app:entryValues="@array/sampling_rate_values"
             app:defaultValue="UI"
             app:summary="Adjust sensor update frequency"/>
-            
+
         <SwitchPreferenceCompat
             app:key="auto_calibration"
             app:title="Auto Calibration"
             app:defaultValue="true"
             app:summary="Automatically calibrate sensor on start"/>
     </PreferenceCategory>
-    
+
     <PreferenceCategory app:title="Appearance">
         <ListPreference
             app:key="theme_preference"
@@ -25,7 +24,7 @@
             app:defaultValue="dark"
             app:summary="Choose application theme"/>
     </PreferenceCategory>
-    
+
     <PreferenceCategory app:title="Data Management">
         <Preference
             app:title="Clear History"

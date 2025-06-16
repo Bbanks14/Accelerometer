@@ -1,33 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<Aps>
-	<Group>
-		<Page Width="225" Height="225" PaperTray="0">
-			<Canvas>
-				<Canvas>
-					<Clip>
-						<Path FillMode="Winding">
-							<PathFigure IsClosed="True">
-								<PolyLine LineColor="#FF000000">
-									<Point X="0" Y="225" />
-									<Point X="0" Y="0" />
-								</PolyLine>
-								<PolyLine LineColor="#FF000000">
-									<Point X="0" Y="0" />
-									<Point X="225" Y="0" />
-								</PolyLine>
-								<PolyLine LineColor="#FF000000">
-									<Point X="225" Y="0" />
-									<Point X="225" Y="225" />
-								</PolyLine>
-								<PolyLine LineColor="#FF000000">
-									<Point X="225" Y="225" />
-									<Point X="0" Y="225" />
-								</PolyLine>
-							</PathFigure>
-						</Path>
-					</Clip>
-				</Canvas>
-			</Canvas>
-		</Page>
-	</Group>
-</Aps>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="240dp"
+    android:height="240dp"
+    android:viewportWidth="240"
+    android:viewportHeight="240">
+  <path
+      android:pathData="M40,0L200,0A40,40 0,0 1,240 40L240,200A40,40 0,0 1,200 240L40,240A40,40 0,0 1,0 200L0,40A40,40 0,0 1,40 0z"
+      android:fillColor="#2C3E50"/>
+  <path
+      android:pathData="M40,120C60,90 90,150 120,120C150,90 180,150 200,120"
+      android:strokeLineJoin="round"
+      android:strokeWidth="8"
+      android:fillColor="#00000000"
+      android:strokeColor="#1ABC9C"
+      android:strokeLineCap="round"/>
+  <path
+      android:pathData="M120,170m-8,0a8,8 0,1 1,16 0a8,8 0,1 1,-16 0"
+      android:fillColor="#1ABC9C"/>
+</vector>

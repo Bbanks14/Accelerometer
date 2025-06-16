@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1a1a1a" <!-- Matches your main layout's dark background -->
+    android:background="#1a1a1a"
     android:gravity="center"
     android:orientation="vertical">
 
@@ -10,7 +10,7 @@
         android:id="@+id/splash_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/app_logo" <!-- Replace with your logo drawable -->
+        android:src="@drawable/app_logo"
         android:contentDescription="App Logo"
         android:scaleType="centerInside" />
     

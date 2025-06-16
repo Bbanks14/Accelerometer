@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Header -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Share Your Data"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Message Input -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Custom Message:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/messageEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minLines="2"
+            android:maxLines="4"
+            android:inputType="textMultiLine"
+            android:hint="Enter your message here..."
+            android:background="@drawable/value_background"
+            android:padding="12dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Share Options -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Share Options:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
+
+        <RadioGroup
+            android:id="@+id/shareOptionsGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp">
+
+            <RadioButton
+                android:id="@+id/shareTextOnly"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Text Message Only"
+                android:padding="12dp"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/shareWithData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Share with Data File (CSV)"
+                android:padding="12dp" />
+
+            <RadioButton
+                android:id="@+id/shareWithGraph"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Share with Graph Image"
+                android:padding="12dp" />
+
+            <RadioButton
+                android:id="@+id/shareComplete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Complete Report (Customizable)"
+                android:padding="12dp" />
+
+        </RadioGroup>
+
+        <!-- Complete Report Options (visible when complete report is selected) -->
+        <LinearLayout
+            android:id="@+id/completeReportOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp"
+            android:padding="16dp"
+            android:background="@drawable/card_background">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Include in Complete Report:"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
+
+            <CheckBox
+                android:id="@+id/includeDataCheckBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Include Data File (CSV)"
+                android:checked="true" />
+
+            <CheckBox
+                android:id="@+id/includeGraphCheckBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Include Graph Image"
+                android:checked="true" />
+
+        </LinearLayout>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="16dp">
+
+            <Button
+                android:id="@+id/backButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Back"
+                android:layout_marginEnd="8dp"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored" />
+
+            <Button
+                android:id="@+id/shareButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Share"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="@color/colorPrimary" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

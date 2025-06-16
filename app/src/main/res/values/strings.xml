@@ -2,8 +2,23 @@
 <resources>
     <string name="app_name">VibroLab</string>
     <string name="nav_header_desc">Navigation header</string>
+    <string name="settings">Settings</string>
+    <string name="menu">Menu</string>
+    <string name="premium">Premium</string>
+    <string name="about">About</string>
     <string name="nav_header_title">VibroLab Pro</string>
   <string name="nav_header_subtitle">Vibration Analysis Tool</string>
   <string name="coordinate_cartesian">Cartesian Coordinates (X, Y, Z)</string>
   <string name="coordinate_polar">Polar Coordinates (ρ,θ,Z)</string>
+    <string name="nav_home_title">Home</string>
+    <string name="nav_live_graph_title">LiveGraph</string>
+    <string name="nav_history_title">Recording History</string>
+    <string name="nav_settings_title">Settings</string>
+    <string name="nav_calibrate_title">Calibrate Sensor</string>
+    <string name="nav_premium_title">Upgrade to Premium</string>
+    <string name="nav_export_title">Export All Data</string>
+    <string name="nav_help_title">Help&amp;Support</string>
+    <string name="nav_about_title">About VibroLab</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>
